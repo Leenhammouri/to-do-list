@@ -1,135 +1,129 @@
-class ToDo {
-  constructor() {
-    this.taskInput = document.getElementById("taskinput");
-    this.addBtn = document.querySelector("#addTask");
-    this.taskList = document.getElementById("taskList");
-    this.deleteAllBtn = document.getElementById("deleteAllBtn");
-    this.selectAll = document.getElementById("selectAll");
+window.onload = function () {
+  const usernameSpan = document.getElementById("usernameSpan");
 
-    this.addBtn.addEventListener("click", () => {
-      this.addTask();
-    });
+  var emailValue = sessionStorage.getItem("emailValue");
 
-    this.taskInput.addEventListener("keydown", (event) => {
-      if (event.key == "Enter") {
-        this.addTask();
-      }
-    });
+  emailValue = emailValue.split("@"); //leen , gmail.com
 
-    this.deleteAllBtn.addEventListener("click", () => {
-      this.deleteAll();
-    });
+  usernameSpan.innerHTML = emailValue[0];
+};
 
-    this.selectAll.addEventListener("click", () => {
-      this.selectAllTasks();
-    });
+const taskInput = document.getElementById("taskinput");
+const addBtn = document.querySelector("#addTask");
+const taskList = document.getElementById("taskList");
+const deleteAllBtn = document.getElementById("deleteAllBtn");
+const selectAll = document.getElementById("selectAll");
+
+addBtn.addEventListener("click", () => {
+  addTask();
+});
+
+taskInput.addEventListener("keydown", (event) => {
+  if (event.key == "Enter") {
+    addTask();
+  }
+});
+
+deleteAllBtn.addEventListener("click", () => {
+  deleteAll();
+});
+
+selectAll.addEventListener("click", () => {
+  selectAllTasks();
+});
+
+function addTask() {
+  const inputTask = taskInput.value;
+
+  if (inputTask == "") {
+    window.alert("Please enter value first");
+    return;
   }
 
-  addTask() {
-    const inputTask = this.taskInput.value;
+  deleteAllBtn.removeAttribute("disabled");
 
-    if (inputTask == "") {
-      window.alert("Please enter value first");
-      return;
-    }
+  const listItem = document.createElement("li");
+  const inputSpan = document.createElement("span");
+  const completedBtn = document.createElement("button");
+  const deleteBtn = document.createElement("button");
+  const editBtn = document.createElement("button");
+  const checkbox = document.createElement("input");
 
-    this.deleteAllBtn.removeAttribute("disabled");
+  checkbox.setAttribute("type", "checkbox");
 
-    const listItem = document.createElement("li");
-    const inputSpan = document.createElement("span");
-    const completedBtn = document.createElement("button");
-    const deleteBtn = document.createElement("button");
-    const editBtn = document.createElement("button");
-    const checkbox = document.createElement("input");
+  completedBtn.addEventListener("click", () => {
+    toggleComplete(inputSpan);
+  });
 
-    checkbox.setAttribute("type", "checkbox");
+  deleteBtn.addEventListener("click", () => {
+    deleteTask(listItem);
+  });
 
-    completedBtn.addEventListener("click", () => {
-      this.toggleComplete(inputSpan);
-    });
+  editBtn.addEventListener("click", () => {
+    editTask(listItem);
+  });
 
-    deleteBtn.addEventListener("click", () => {
-      this.deleteTask(listItem);
-    });
+  completedBtn.classList.add("btn");
+  completedBtn.classList.add("btn-success");
 
-    editBtn.addEventListener("click", () => {
-      this.editTask(listItem);
-    });
-    // completedBtn.addEventListener("click", this.toggleComplete(inputSpan));
-    completedBtn.classList.add("btn");
-    completedBtn.classList.add("btn-success");
+  editBtn.classList.add("btn");
+  editBtn.classList.add("btn-warning");
 
-    editBtn.classList.add("btn");
-    editBtn.classList.add("btn-warning");
+  deleteBtn.classList.add("btn");
+  deleteBtn.classList.add("btn-danger");
 
-    deleteBtn.classList.add("btn");
-    deleteBtn.classList.add("btn-danger");
+  listItem.classList.add("mb-4");
 
-    listItem.classList.add("mb-4");
+  inputSpan.innerText = inputTask;
+  completedBtn.innerText = "Complete";
+  deleteBtn.innerText = "Delete";
+  editBtn.innerText = "Edit";
 
-    inputSpan.innerText = inputTask;
-    completedBtn.innerText = "Complete";
-    deleteBtn.innerText = "Delete";
-    editBtn.innerText = "Edit";
+  listItem.appendChild(checkbox);
+  listItem.appendChild(inputSpan);
+  listItem.appendChild(completedBtn);
+  listItem.appendChild(deleteBtn);
+  listItem.appendChild(editBtn);
 
-    listItem.appendChild(checkbox);
-    listItem.appendChild(inputSpan);
-    listItem.appendChild(completedBtn);
-    listItem.appendChild(deleteBtn);
-    listItem.appendChild(editBtn);
+  taskList.appendChild(listItem);
 
-    taskList.appendChild(listItem);
+  taskInput.value = "";
 
-    this.taskInput.value = "";
-
-    var childsCount = this.taskList.childElementCount;
-    console.log(childsCount);
-    if (childsCount > 0) {
-      this.deleteAllBtn.removeAttribute("disabled");
-    }
-  }
-
-  toggleComplete(task) {
-    task.classList.toggle("completed");
-  }
-
-  deleteTask(task) {
-    task.remove();
-  }
-
-  editTask(task) {
-    var oldText = task.querySelector("span").innerText;
-    this.taskInput.value = oldText;
-    task.remove();
-  }
-
-  // deleteAllSelected() {
-  //   const arrayOfTasks = document.querySelectorAll("li");
-  //   arrayOfTasks.forEach((task) => {
-  //     const taskCheckBox = task.querySelector('input[type="checkbox"]');
-  //     if (taskCheckBox.checked) {
-  //       this.taskList.removeChild(task);
-  //     }
-  //   });
-  // }
-
-  deleteAll() {
-    const allListItems = document.querySelectorAll("li");
-    allListItems.forEach((itemList) => {
-      const listCheckBox = itemList.querySelector('input[type="checkbox"]');
-      if (listCheckBox.checked) {
-        itemList.remove();
-      }
-    });
-  }
-
-  selectAllTasks() {
-    const allTasks = document.querySelectorAll("li");
-    allTasks.forEach((task) => {
-      const checkBoxTask = task.querySelector('input[type="checkbox"]');
-      checkBoxTask.checked = true;
-    });
+  var childsCount = taskList.childElementCount;
+  console.log(childsCount);
+  if (childsCount > 0) {
+    deleteAllBtn.removeAttribute("disabled");
   }
 }
 
-const todoTask = new ToDo();
+function toggleComplete(task) {
+  task.classList.toggle("completed");
+}
+
+function deleteTask(task) {
+  remove();
+}
+
+function editTask(task) {
+  var oldText = task.querySelector("span").innerText;
+  taskInput.value = oldText;
+  remove();
+}
+
+function deleteAll() {
+  const allListItems = document.querySelectorAll("li");
+  allListItems.forEach((itemList) => {
+    const listCheckBox = itemList.querySelector('input[type="checkbox"]');
+    if (listCheckBox.checked) {
+      itemList.remove();
+    }
+  });
+}
+
+function selectAllTasks() {
+  const allTasks = document.querySelectorAll("li");
+  allTasks.forEach((task) => {
+    const checkBoxTask = task.querySelector('input[type="checkbox"]');
+    checkBoxTask.checked = true;
+  });
+}
